@@ -2,9 +2,31 @@ import React, { useState } from 'react'
 
 // 子组件
 function Todo({ todo, index, clickComplete, downDelete }) {   //解构
+    const [isDoubleClick, setisDoubleClick] = useState(false)
+    const [textValue, settextValue] = useState('')
+    const twoClick = () => {
+        setisDoubleClick(true)
+        settextValue(todo.text)
+    }
+    const inputChange = (e) => {
+        settextValue(e.target.value)
+    }
+    const onBlur = () => {
+        setisDoubleClick(false)
+        todo.text = textValue
+        settextValue('')
+    }
+    const keyDown = (e) => {
+        if (e.keyCode === 13) {
+            todo.text = textValue
+            setisDoubleClick(false)
+            settextValue('')
+            // console.log("123456")
+        }
+    }
     return (
-        <div className="todo-item" style={{ textDecorationLine: todo.isCompleted ? 'line-through' : 'none' }}>{todo.text}
-
+        <div className="todo-item" style={{ textDecorationLine: todo.isCompleted ? 'line-through' : 'none' }}>
+            {isDoubleClick ? <input onBlur={onBlur} onKeyDown={keyDown} onChange={inputChange} type='text' value={textValue} /> : <div onDoubleClick={twoClick}>{todo.text}</div>}
             <button onClick={() => { clickComplete(index) }}>完成</button>
             <button onClick={() => { downDelete(index) }}>删除</button>
         </div>
@@ -32,7 +54,6 @@ function TodoFrom({ addTodo }) {  //解构
         if (e.keyCode === 13) {
             handle()
         }
-
     }
     return (
         <div>
@@ -88,6 +109,7 @@ function App() {
         })
         setTodos(newTodos)
     }
+
     return (
         <div className='center'>
             <h1>TodoList</h1>
